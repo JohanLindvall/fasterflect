@@ -61,11 +61,18 @@ namespace Fasterflect.Emitter
 		protected internal static DynamicMethod CreateDynamicMethod( string name, Type targetType, Type returnType,
 			Type[] paramTypes )
 		{
-			return new DynamicMethod( name, MethodAttributes.Static | MethodAttributes.Public,
-				CallingConventions.Standard, returnType, paramTypes,
-				targetType.IsArray ? targetType.GetElementType() : targetType,
-				true );
-		}
+		    if (targetType.IsInterface)
+		    {
+		        return new DynamicMethod(name, returnType, paramTypes);
+            }
+            else
+            {
+                return new DynamicMethod(name, MethodAttributes.Static | MethodAttributes.Public,
+                    CallingConventions.Standard, returnType, paramTypes,
+                    targetType.IsArray ? targetType.GetElementType() : targetType,
+                    true);
+            }
+        }
 
 		protected void LoadInnerStructToLocal( byte localPosition )
 		{
