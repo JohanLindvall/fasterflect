@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Fasterflect.Caching;
 
 namespace Fasterflect.Probing
 {
@@ -33,11 +32,6 @@ namespace Fasterflect.Probing
 		/// The list of candidate methods for invocations through this dispatcher instance.
 		/// </summary>
 		private readonly List<MethodBase> methodPool = new List<MethodBase>();
-
-		/// <summary>
-		/// This field is used to cache the best match for a given parameter set (as represented by the SourceInfo class).
-		/// </summary>
-		private readonly Cache<SourceInfo, MethodMap> mapCache = new Cache<SourceInfo, MethodMap>();
 
 		#region Constructors
 		/// <summary>
@@ -91,20 +85,14 @@ namespace Fasterflect.Probing
 			}
 			var sourceInfo = SourceInfo.CreateFromType( sample.GetType() );
 
-			// check to see if we already have a map for best match
-			MethodMap map = mapCache.Get( sourceInfo );
 			object[] values = sourceInfo.GetParameterValues( sample );
-			if( map == null )
+			string[] names = sourceInfo.ParamNames;
+			Type[] types = sourceInfo.ParamTypes;
+			if( names.Length != values.Length || names.Length != types.Length )
 			{
-				string[] names = sourceInfo.ParamNames;
-				Type[] types = sourceInfo.ParamTypes;
-				if( names.Length != values.Length || names.Length != types.Length )
-				{
-					throw new ArgumentException( "Mismatching name, type and value arrays (must be of identical length)." );
-				}
-				map = MapFactory.DetermineBestMethodMatch( methodPool, mustUseAllParameters, names, types, values );
-				mapCache.Insert( sourceInfo, map );
+				throw new ArgumentException( "Mismatching name, type and value arrays (must be of identical length)." );
 			}
+			MethodMap map = MapFactory.DetermineBestMethodMatch( methodPool, mustUseAllParameters, names, types, values );
 			bool isStatic = obj is Type;
 			return isStatic ? map.Invoke( values ) : map.Invoke( obj, values );
 		}
@@ -130,13 +118,8 @@ namespace Fasterflect.Probing
 			bool isStatic = obj is Type;
 			var type = isStatic ? obj as Type : obj.GetType();
 			var sourceInfo = new SourceInfo( type, names, types );
-			// check to see if we already have a map for best match
-			MethodMap map = mapCache.Get( sourceInfo );
-			if( map == null )
-			{
-				map = MapFactory.DetermineBestMethodMatch( methodPool, mustUseAllParameters, names, types, values );
-				mapCache.Insert( sourceInfo, map );
-			}
+			MethodMap  map = MapFactory.DetermineBestMethodMatch( methodPool, mustUseAllParameters, names, types, values );
+
 			return isStatic ? map.Invoke( values ) : map.Invoke( obj, values );
 		}
 	}

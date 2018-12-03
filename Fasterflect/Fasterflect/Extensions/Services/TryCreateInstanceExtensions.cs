@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Fasterflect.Caching;
 using Fasterflect.Probing;
 
 namespace Fasterflect
@@ -30,12 +29,6 @@ namespace Fasterflect
     /// </summary>
     public static class TryCreateInstanceExtensions
     {
-        /// <summary>
-        /// This field is used to cache information on objects used as parameters for object construction, which
-        /// improves performance for subsequent instantiations of the same type using a compatible source type.
-        /// </summary>
-        private static readonly Cache<Type, SourceInfo> sourceInfoCache = new Cache<Type, SourceInfo>();
-
         #region Constructor Invocation (TryCreateInstance)
         /// <summary>
         /// Creates an instance of the given <paramref name="type"/> using the public properties of the 
@@ -50,12 +43,8 @@ namespace Fasterflect
         public static object TryCreateInstance( this Type type, object sample )
         {
             Type sourceType = sample.GetType();
-            SourceInfo sourceInfo = sourceInfoCache.Get( sourceType );
-            if( sourceInfo == null )
-            {
-                sourceInfo = SourceInfo.CreateFromType( sourceType );
-                sourceInfoCache.Insert( sourceType, sourceInfo );
-            }
+            SourceInfo sourceInfo = SourceInfo.CreateFromType( sourceType );
+
             object[] paramValues = sourceInfo.GetParameterValues( sample );
             MethodMap map = MapFactory.PrepareInvoke( type, sourceInfo.ParamNames, sourceInfo.ParamTypes, paramValues );
             return map.Invoke( paramValues );

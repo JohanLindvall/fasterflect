@@ -24,7 +24,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Fasterflect;
-using Fasterflect.Caching;
 using Fasterflect.Emitter;
 using Fasterflect.Probing;
 
@@ -120,37 +119,6 @@ namespace FasterflectBenchmark
         }
 
         #region Internal Testing
-        private static void RunDictionaryBenchmark()
-        {
-            int dictionarySize = 1000;
-            int index = new Random( (int) (DateTime.Now.Ticks % int.MaxValue) ).Next( 0, dictionarySize );
-            List<string> stringList =
-                Enumerable.Range( 0, dictionarySize ).Select( s => Path.GetRandomFileName() + Path.GetRandomFileName() )
-                    .ToList();
-            Dictionary<string, string> stringDictionary = stringList.ToDictionary( s => s, s => s );
-            var stringCache = new Cache<string, string>();
-            stringList.ForEach( s => stringCache.Insert( s, s, CacheStrategy.Permanent ) );
-
-            string key = stringList[ index ];
-            var initMap = new Dictionary<string, Action> { };
-            var actionMap = new Dictionary<string, Action>
-                            {
-                                { "Dictionary ContainsKey", () => stringDictionary.ContainsKey( key ) },
-                                { "Dictionary Indexer", () => { var x = stringDictionary[ key ]; } },
-                                {
-                                    "Dictionary TryGetValue", () =>
-                                                              {
-                                                                  string s;
-                                                                  stringDictionary.TryGetValue( key, out s );
-                                                              }
-                                    },
-                                //{"List Contains", () => stringList.Contains( key ) },
-                                //{"List Linq First", () => stringList.First( item => item == key ) },
-                                { "Cache GetValue", () => stringCache.Get( key ) },
-                            };
-            Execute( "Dictionary Benchmark", initMap, actionMap );
-        }
-
         private static void RunHashCodeBenchmark()
         {
             var callInfo = new CallInfo(TargetType, null, Flags.InstanceAnyVisibility, MemberTypes.Field, "name",

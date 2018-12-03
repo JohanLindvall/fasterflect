@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Fasterflect.Caching;
 
 namespace Fasterflect.Probing
 {
@@ -33,24 +32,12 @@ namespace Fasterflect.Probing
 	/// </summary>
 	internal static class MapFactory
 	{
-		/// <summary>
-		/// This field contains a dictionary mapping from a particular constructor to all known parameter sets,
-		/// each with an associated MethodMap responsible for creating instances of the type using the given
-		/// constructor and parameter set.
-		/// </summary>
-		private static readonly Cache<SourceInfo, MethodMap> ctorMapCache = new Cache<SourceInfo, MethodMap>();
-
 		#region Map Construction
 		public static MethodMap PrepareInvoke( Type type, string[] paramNames, Type[] parameterTypes,
 		                                       object[] sampleParamValues )
 		{
             SourceInfo sourceInfo = new SourceInfo(type, paramNames, parameterTypes);
-			MethodMap map = ctorMapCache.Get( sourceInfo );
-			if( map == null )
-			{
-                map = DetermineBestConstructorMatch(type, paramNames, parameterTypes, sampleParamValues);
-				ctorMapCache.Insert( sourceInfo, map );
-			}
+			MethodMap map = DetermineBestConstructorMatch(type, paramNames, parameterTypes, sampleParamValues);
 			return map;
 		}
 		#endregion

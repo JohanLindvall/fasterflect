@@ -57,7 +57,6 @@
     <Compile Include="Invocation\ArrayTest.cs" />
     <Compile Include="Invocation\BaseInvocationTest.cs" />
     <Compile Include="Invocation\ConstructorTest.cs" />
-    <Compile Include="Invocation\DelegateCacheTest.cs" />
     <Compile Include="Invocation\DelegateTest.cs" />
     <Compile Include="Invocation\FieldTest.cs" />
     <Compile Include="Invocation\IndexerTest.cs" />

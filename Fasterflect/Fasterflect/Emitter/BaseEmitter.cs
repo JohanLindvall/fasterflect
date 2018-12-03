@@ -19,14 +19,11 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using Fasterflect.Caching;
 
 namespace Fasterflect.Emitter
 {
 	internal abstract class BaseEmitter
 	{
-		private static readonly Cache<CallInfo, Delegate> cache = new Cache<CallInfo, Delegate>();
-
 		protected static readonly MethodInfo StructGetMethod =
 			Constants.StructType.GetMethod( "get_Value", BindingFlags.Public | BindingFlags.Instance );
 
@@ -44,15 +41,9 @@ namespace Fasterflect.Emitter
 
 		internal Delegate GetDelegate()
 		{
-			var action = cache.Get( CallInfo );
-			if( action == null )
-			{
-				Method = CreateDynamicMethod();
-				Generator = new EmitHelper( Method.GetILGenerator() );
-				action = CreateDelegate();
-				cache.Insert( CallInfo, action, CacheStrategy.Temporary );
-			}
-			return action;
+			Method = CreateDynamicMethod();
+			Generator = new EmitHelper( Method.GetILGenerator() );
+			return CreateDelegate();
 		}
 
 		protected internal abstract DynamicMethod CreateDynamicMethod();

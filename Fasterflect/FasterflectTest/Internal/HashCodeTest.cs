@@ -20,7 +20,6 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Fasterflect;
-using Fasterflect.Caching;
 using Fasterflect.Emitter;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -96,19 +95,6 @@ namespace FasterflectTest.Internal
       Assert.AreEqual( infos[0], infos[1] );
       Assert.IsTrue( infos[0].Equals( infos[1] ) );
       Assert.IsTrue( infos[0] == infos[1] );
-	  }
-
-	  [TestMethod]
-	  public void TestCache()
-	  {
-			var types = new[] { typeof(A1), typeof(A1) };
-			var infos = types.Select( t => new CallInfo( t, null, Flags.StaticInstanceAnyVisibility, MemberTypes.Property, "P1", Type.EmptyTypes, null, true ) ).ToList();
-	    var cache = new Cache<CallInfo, object>();
-      infos.ForEach( ci => cache.Insert( ci, ci ) );
-      Assert.AreEqual( 1, cache.Count );
-	    Assert.IsNotNull( cache.Get( infos[ 0 ] ) );
-	    Assert.IsNotNull( cache.Get( infos[ 1 ] ) );
-      Assert.AreEqual( infos[0], cache.Get( infos[ 0 ] ) );
 	  }
 
 	  [TestMethod]

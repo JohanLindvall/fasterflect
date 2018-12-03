@@ -51,8 +51,6 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Caching\CacheStrategy.cs" />
-    <Compile Include="Caching\Cache.cs" />
     <Compile Include="Common\FormatOptions.cs" />
     <Compile Include="DynamicReflection\DynamicWrapper.cs" />
     <Compile Include="DynamicReflection\DynamicBuilder.cs" />
