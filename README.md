@@ -1,4 +1,4 @@
-https://ci.appveyor.com/api/projects/status/iv5q8b6fowb0u0n5
+[![Build status](https://ci.appveyor.com/api/projects/status/iv5q8b6fowb0u0n5/branch/master?svg=true)](https://ci.appveyor.com/project/JohanLindvall/fasterflect/branch/master)
 
 #### NuGet
 Fasterflect is available on NuGet: https://www.nuget.org/packages/fasterflect/
