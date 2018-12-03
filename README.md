@@ -1,3 +1,5 @@
+https://ci.appveyor.com/api/projects/status/iv5q8b6fowb0u0n5
+
 #### NuGet
 Fasterflect is available on NuGet: https://www.nuget.org/packages/fasterflect/
 
