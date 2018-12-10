@@ -54,7 +54,7 @@ namespace Fasterflect.Emitter
 		{
 		    if (targetType.IsInterface)
 		    {
-		        return new DynamicMethod(name, returnType, paramTypes);
+		        return new DynamicMethod(name, returnType, paramTypes, true);
             }
             else
             {
